@@ -1,3 +1,7 @@
+v0.1.?: 2015-??-??
+Changes:
+  - Support for indepenant home directory ownership         - Daniel Lawrence (@daniellawrence)
+
 v0.1.0: 2014-??-??
 Changes:
   - Support for the 'allowdupe' feature of the 'user' type  - Aurelien Requiem (@aureq)

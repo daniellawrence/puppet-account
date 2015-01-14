@@ -80,6 +80,16 @@
 #   Defaults to false.
 #   Valid values are true, false, yes, no.
 #
+# [*home_dir_owner*]
+#   Whether to change the owner of the home directory to give user.
+#   Defaults to undef.
+#   This is used for sftp jailing, make sure you set the mode to '0705'
+#
+# [*home_dir_group*]
+#   Whether to change the group of the home directory to give group.
+#   Defaults to undef.
+#   This is used for sftp jailing, make sure you set the mode to '0705'
+#
 # === Examples
 #
 #  account { 'sysadmin':
@@ -100,7 +110,8 @@ define account(
   $manage_home = true, $home_dir = undef,  $home_dir_perms = '0750',
   $create_group = true, $system = false, $uid = undef, $ssh_key = undef,
   $ssh_key_type = 'ssh-rsa', $groups = [], $ensure = present,
-  $comment= "${title} Puppet-managed User", $gid = 'users', $allowdupe = false
+  $comment= "${title} Puppet-managed User", $gid = 'users', $allowdupe = false,
+  $home_dir_owner = undef, $home_dir_group = undef,
 ) {
 
   if $home_dir == undef {
@@ -165,6 +176,20 @@ define account(
     }
   }
 
+  if $home_dir_owner != undef {
+    $real_dir_owner = $home_dir_owner
+  }else{
+    $real_dir_owner = $dir_owner
+  }
+
+  if $home_dir_group != undef {
+    $real_dir_group = $home_dir_group
+  }else{
+    $real_dir_group = $dir_group
+  }
+
+  
+
   user {
     $title:
       ensure     => $ensure,
@@ -185,8 +210,8 @@ define account(
     "${title}_home":
       ensure  => $dir_ensure,
       path    => $home_dir_real,
-      owner   => $dir_owner,
-      group   => $dir_group,
+      owner   => $real_dir_owner,
+      group   => $real_dir_group,
       mode    => $home_dir_perms;
 
     "${title}_sshdir":
